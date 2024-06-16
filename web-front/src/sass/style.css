@@ -467,3 +467,19 @@ footer {
   border: 2px solid #007bff;
   color: #007bff;
 }
+
+.recommendation-separator {
+  text-align: center;
+  margin: 2rem 5.4rem;
+  padding: 1rem;
+  background-color: #eadcdc; /* Light grey background */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-separator h2 {
+  font-size: 1.5rem;
+  color: #333; /* Darker grey text */
+  margin: 0;
+  padding: 0;
+}

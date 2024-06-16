@@ -1,10 +1,8 @@
 import React from "react";
-import { BiLinkExternal } from "react-icons/bi";
 import defaultBook from "./img/defaultBook.png";
 import "../src/sass/style.css";
-import { motion } from "framer-motion";
 
-const Book = ({ id, volumeInfo }) => {
+const Book = ({ name, author, stars, category, imgPath }) => {
   const imageVariants = {
     hover: {
       scale: 1.7,
@@ -16,36 +14,37 @@ const Book = ({ id, volumeInfo }) => {
       },
     },
   };
-  let { title, authors, publisher, previewLink, imageLinks } = volumeInfo;
 
   //setting up default values for volume info data
-  title = title || "Title is not available";
-  authors = authors || "Author(s) name not available";
-  publisher = publisher || "Publisher company not available";
-  previewLink = previewLink || "https://books.google.co.in/";
+  name = name || "Title is not available";
+  author = author || "Author(s) name not available";
+  category = category || "Category not available";
+  stars = stars || "No rating";
+  // imgPath = null;//TODO: implement images loading!
+  imgPath = imgPath || defaultBook;
 
   return (
-    <section key={id} className="loading-card">
+    <section key={1} className="loading-card">
       <div>
         <div>
-          <motion.img
-            src={imageLinks ? imageLinks.thumbnail : defaultBook}
+          <img
+            src={`http://localhost:5000/img/${imgPath}`}
             width="100px"
             alt="Book-cover"
             variants={imageVariants}
-            whileHover="hover"
+            // whileHover="hover"
           />
         </div>
         <div>
-          {title && (
+          {name && (
             <div>
-              <h3 className="inline">{title}</h3>
+              <h3 className="inline">{name}</h3>
             </div>
           )}
         </div>
 
         <div>
-          {authors && (
+          {author && (
             <h4 style={{ paddingBottom: "1rem", color: "black" }}>
               {" "}
               Author:{" "}
@@ -56,17 +55,17 @@ const Book = ({ id, volumeInfo }) => {
                 }}
               >
                 {" "}
-                {authors}{" "}
+                {author}{" "}
               </span>
             </h4>
           )}
         </div>
 
         <div>
-          {publisher && (
+          {category && (
             <h5 style={{ paddingBottom: "1rem", color: "black" }}>
               {" "}
-              Published by:{" "}
+              Category:{" "}
               <span
                 style={{
                   fontWeight: "bold",
@@ -74,14 +73,14 @@ const Book = ({ id, volumeInfo }) => {
                 }}
               >
                 {" "}
-                {publisher}{" "}
+                {category}{" "}
               </span>
             </h5>
           )}
         </div>
 
         <div>
-          {previewLink && (
+          {stars && (
             <h5
               style={{
                 fontWeight: "bold",
@@ -89,11 +88,16 @@ const Book = ({ id, volumeInfo }) => {
                 paddingBottom: "1rem",
               }}
             >
-              Read more :{" "}
-              <a href={previewLink} target="_blank" rel="noreferrer">
+              Rating :{" "}
+              <span
+                style={{
+                  fontWeight: "bold",
+                  color: "#3B3B3B",
+                }}
+              >
                 {" "}
-                Google Books <BiLinkExternal></BiLinkExternal>{" "}
-              </a>
+                {stars}{" "}
+              </span>
             </h5>
           )}
         </div>

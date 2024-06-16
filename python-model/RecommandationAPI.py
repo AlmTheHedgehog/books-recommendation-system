@@ -3,14 +3,16 @@ import pandas as pd
 import os
 from RecommandationSystem import RecommandationSystem
 from SearchSystem import SearchSystem
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask import request
+from flask_cors import CORS
 import json
 
 path = 'data/main_dataset_new.csv'
 drop_columns = ['Unnamed: 0', 'image', 'format', 'price', 'currency', 'old_price', 'Happy', 'Angry', 'Surprise', 'Sad', 'Fear', 'isbn']
 
 api = Flask(__name__)
+CORS(api)
 model = RecommandationSystem()
 model.init(path, drop_columns)
 
@@ -18,7 +20,13 @@ search = SearchSystem()
 search.init(path, 'name', drop_columns)
 
 def run():
-    api.run()
+    api.run(port=5000)
+
+
+@api.route('/img/<path:filename>')
+def serve_image(filename):
+    print(filename)
+    return send_from_directory(os.getcwd(), filename)
 
 @api.route("/recommandations")
 def get_recommandations():

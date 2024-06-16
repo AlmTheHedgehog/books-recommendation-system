@@ -11,7 +11,7 @@ const Header = () => {
             style={{
               background: "none",
               // borderRadius: "1rem",
-              marginBottom: 50,
+              marginBottom: 35,
               color: "#333",
               textAlign: "center",
               // fontWeight: "bold", //No need of bold because headings are itself bold

@@ -8,54 +8,62 @@ import LoadingCard from "./loadingCard";
 
 const BookDetails = ({ user,mood }) => {
   const [details, setDetails] = useState([]);
-  const [term, setTerm] = useState("Nice");
+  const [searchRecomm, setSearchRecomm] = useState([]);
+  const [term, setTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [, setError] = useState(null)
 
   useEffect(() => {
     const fetchDetails = async () => {
       setIsLoading(true);
-      const resources = await axios.get(
-        `https://www.googleapis.com/books/v1/volumes?q=${term}&maxResults=11`
-      );
-      setDetails(resources.data.items);
-      setIsLoading(false);
-    };
-    fetchDetails();
-  }, [term, user]);
+      setError(null);
 
-  const loadMore = async () => {
-    const resources = await axios.get(
-      `https://www.googleapis.com/books/v1/volumes?q=${term}&maxResults=8&startIndex=${details.length}`
-    );
-    setDetails((oldDetails) => [...oldDetails, ...resources.data.items]);
-  };
+      if (!user || !mood) {
+        setIsLoading(false);
+        return; // Exit early if user or mood is null
+      }
+
+      try {
+        console.log(user);
+        console.log(mood);
+        console.log(term);
+        let response;
+        if(term === ""){
+          response = await axios.get(`http://localhost:5000/recommandations`, {
+            params: {
+              id: user.bookId,
+              happy: mood.happy || 0.0,
+              angry: mood.angry || 0.0,
+              surprise: mood.surprise || 0.0,
+              sad: mood.sad || 0.0,
+              fear: mood.fear || 0.0,
+            },
+          });
+          setDetails(response.data);
+        }else{
+          response = await axios.get(`http://localhost:5000/search`, {
+            params: {
+              query: term,
+            },
+          });
+          setDetails(response.data.search);
+          setSearchRecomm(response.data.recommand);
+        }
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching recommendations:", error);
+        setError("Failed to fetch book recommendations. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDetails();
+  }, [term, user, mood]);
 
   return (
     <>
-      <h2
-        style={{
-          textTransform: "capitalize",
-          color: "#DB4437",
-          fontSize: 40,
-          marginTop: -40,
-        }}
-      >
-        {term}
-      </h2>
       <Searchform searchText={(text) => setTerm(text)}></Searchform>
-      {mood && (
-        <div>
-          <h3>Your Mood:</h3>
-          <ul>
-            {Object.entries(mood).map(([moodType, value]) => (
-              <li key={moodType}>
-                {moodType.charAt(0).toUpperCase() + moodType.slice(1)}: {value}
-              </li>
-            ))}
-          </ul>
-          Book id: {user.bookId}
-        </div>
-      )}
       {isLoading ? (
         <section className="container" style={{ padding: "2rem 0rem" }}>
           <LoadingCard />
@@ -84,38 +92,60 @@ const BookDetails = ({ user,mood }) => {
       ) : (
         <section>
           <section className="container" style={{ padding: "2rem 0rem" }}>
-            {details.map((book, index) => (
-              <Book {...book} key={index} />
-            ))}
-            <div className="custom-card">
-              <h3 style={{ fontSize: "1.32rem", color: "white" }}>
-                Didn't find the book you love?
-              </h3>
-              <br />
+              {details.map((book, index) => (
+                <Book
+                  key={index}
+                  name={book.name}
+                  author={book.author}
+                  stars={book.book_depository_stars}
+                  category={book.category}
+                  imgPath={book.img_paths}
+                />
+              ))}
 
-              <img
-                style={{ width: "100%" }}
-                src={logo}
-                alt="A man reading a book"
-                srcSet=""
-              />
+            <div>
+              {term === "" && (
+                <div className="custom-card">
+                  <h3 style={{ fontSize: "1.32rem", color: "white" }}>
+                    Didn't find the book you like?
+                  </h3>
+                  <br />
 
-              <h3 style={{ fontSize: "1.21rem", color: "white" }}>
-                Search for your favourite{" "}
-                <span style={{ fontWeight: "bold", color: "black" }}>
-                  Genre{" "}
-                </span>
-                or{" "}
-                <span style={{ fontWeight: "bold", color: "black" }}>
-                  Author{" "}
-                </span>
-                in the search box!!
-              </h3>
+                  <img
+                    style={{ width: "100%" }}
+                    src={logo}
+                    alt="A man reading a book"
+                    srcSet=""
+                  />
+
+                  <h3 style={{ fontSize: "1.21rem", color: "white" }}>
+                    Search for it in the search box!
+                  </h3>
+                </div>
+              )}
             </div>
           </section>
-          <div className="load-more">
-            <button onClick={() => loadMore()}>Load More!</button>
-          </div>
+
+          {term !== "" && (
+            <div>
+              <div className="recommendation-separator">
+                <h2>We also recommend</h2>
+              </div>
+              <section className="container" style={{ padding: "2rem 0rem" }}>
+                {searchRecomm.map((book, index) => (
+                  <Book
+                    key={index}
+                    name={book.name}
+                    author={book.author}
+                    stars={book.book_depository_stars}
+                    category={book.category}
+                    imgPath={book.img_paths}
+                  />
+                ))}
+              </section>
+            </div>
+          )}
+
         </section>
       )}
     </>

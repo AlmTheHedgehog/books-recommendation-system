@@ -11,4 +11,4 @@
    conda activate the_enviroment_name
 4. Change into the route directiory and run:
    ```bash
-   python ./RecommandationsAPI.py
+   python ./RecommandationAPI.py
