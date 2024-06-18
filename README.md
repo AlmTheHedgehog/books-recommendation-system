@@ -1,6 +1,19 @@
-# books-recommendation-system
+# Bookflex - books recommendation system
 
 ## Usage of Recommandation System
+
+Dependencies:
+- __Python 3.9__
+- Flask - 3.0.3
+- Flask-Cors - 1.11.1
+- joblib - 1.2.0
+- nltk - 3.8.1
+- numpy - 1.26.4
+- pandas - 2.2.2
+- scikit_learn - 1.3.0
+- scipy - 1.11.3
+- text2emotion - 0.0.5
+
 
 1. First, download Miniconda: [Miniconda Installation Guide](https://docs.anaconda.com/free/miniconda/)
 2. Go to the model directory:
